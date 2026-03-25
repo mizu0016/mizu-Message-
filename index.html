@@ -2,100 +2,61 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Mizuki Chat - Biometric Edition</title>
+  <title>Mizuki Chat Pro - WebAuthn</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #0f0f0f; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-    .card { background: #1a1a1a; padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.7); width: 340px; text-align: center; border: 1px solid #333; transition: 0.3s; }
+    body { font-family: sans-serif; background: #0f0f0f; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .card { background: #1a1a1a; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); width: 340px; text-align: center; border: 1px solid #333; }
     .hidden { display: none; }
-    
-    h2 { color: #007bff; letter-spacing: 2px; margin-bottom: 10px; }
-    input { width: 90%; padding: 14px; margin: 12px 0; border: 1px solid #333; border-radius: 12px; background: #252525; color: white; font-size: 16px; outline: none; }
-    input:focus { border-color: #007bff; }
-    
-    button { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; margin-top: 10px; }
-    button:active { transform: scale(0.98); background: #0056b3; }
-    
-    #msg-list { height: 300px; overflow-y: auto; background: #111; padding: 15px; border-radius: 12px; text-align: left; margin: 15px 0; border: 1px solid #222; }
-    .msg-item { background: #252525; padding: 10px; margin-bottom: 10px; border-radius: 10px; border-left: 5px solid #007bff; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    .fingerprint-icon { font-size: 80px; cursor: pointer; margin: 25px 0; filter: drop-shadow(0 0 10px #007bff); transition: 0.3s; }
-    .fingerprint-icon:hover { transform: scale(1.1); filter: drop-shadow(0 0 20px #007bff); }
-    
-    .search-box { background: #222; padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
-    #search-result { font-size: 12px; font-weight: bold; }
+    h2 { color: #007bff; }
+    input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #333; border-radius: 10px; background: #222; color: white; }
+    button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+    #msg-list { height: 250px; overflow-y: auto; background: #111; padding: 10px; border-radius: 10px; text-align: left; margin: 15px 0; border: 1px solid #222; }
+    .msg-item { background: #252525; padding: 8px; margin-bottom: 8px; border-radius: 8px; border-left: 4px solid #007bff; font-size: 14px; }
+    .fp-btn { font-size: 60px; cursor: pointer; margin: 20px 0; display: inline-block; }
   </style>
 </head>
 <body>
 
-  <div id="view-fp" class="card">
+  <div id="view-login" class="card">
     <h2>MIZUKI CHAT</h2>
-    <p style="font-size: 14px; color: #888;">SECURITY VERIFICATION</p>
-    <div class="fingerprint-icon" onclick="authenticate()">🖐️</div>
-    <p id="fp-status">アイコンをタップして解除</p>
-    <button onclick="showView('view-register')" style="background:none; color:#007bff; font-size:13px; text-decoration: underline;">新規登録はこちら</button>
+    <p style="font-size: 12px; color: #888;">SIGNATURE VERIFICATION</p>
+    <div class="fp-btn" onclick="login()">🖐️</div>
+    <p id="status">指紋でログイン</p>
+    <button onclick="showView('view-reg')" style="background:none; color:#007bff; font-size:12px;">新規ID登録はこちら</button>
   </div>
 
-  <div id="view-register" class="card hidden">
-    <h3>USER REGISTRATION</h3>
+  <div id="view-reg" class="card hidden">
+    <h3>PRO REGISTRATION</h3>
     <input type="text" id="reg-id" placeholder="登録するユーザーID">
-    <p style="font-size:12px; color:#666;">このIDと指紋を紐付けます</p>
-    <button onclick="registerFingerprint()">本物の指紋を登録</button>
-    <button onclick="showView('view-fp')" style="background:none; border:1px solid #444; margin-top:15px;">戻る</button>
+    <button onclick="register()">指紋と公開鍵を登録</button>
+    <button onclick="showView('view-login')" style="background:none; border:1px solid #444; margin-top:10px;">戻る</button>
   </div>
 
   <div id="view-chat" class="card hidden" style="width: 90%; max-width: 450px;">
-    <div class="search-box">
-      <input type="text" id="search-id" placeholder="友達のIDを検索..." style="width: 90%;">
-      <button onclick="findUser()" style="padding: 8px; background: #333;">ID検索実行</button>
-      <p id="search-result"></p>
-    </div>
-    
     <div id="msg-list"></div>
-    
-    <input type="text" id="msg-input" placeholder="メッセージを入力...">
-    <div style="display: flex; gap: 10px;">
-      <button onclick="send()" style="flex: 2;">送信</button>
-      <button onclick="load()" style="flex: 1; background: #28a745;">更新</button>
-    </div>
+    <input type="text" id="msg-input" placeholder="メッセージ...">
+    <button onclick="sendMsg()">送信</button>
+    <button onclick="loadMsgs()" style="background: #28a745; margin-top:5px;">更新</button>
   </div>
 
   <script>
-    // みずのGAS URL
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxuDosNX6G4m4xTLFT9s8XxTFz74aFFe2gNKRQ38LexeJiZdy_-EFaLX9wo8thg-Nc/exec'; 
+    // ★みずのGAS URLをここに貼り付けて！
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxuDosNX6G4m4xTLFT9s8XxTFz74aFFe2gNKRQ38LexeJiZdy_-EFaLX9wo8thg-Nc/exec';
 
-    let currentUserId = "";
+    let myId = localStorage.getItem('mizuki_chat_id') || "";
 
-    // 本物の指紋認証を起動
-    async function authenticate() {
-      const status = document.getElementById('fp-status');
-      status.innerText = "認証待機中...";
+    // ユーティリティ：ArrayBufferをBase64文字列に変換
+    const bufferToBase64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
 
-      try {
-        const challenge = window.crypto.getRandomValues(new Uint8Array(32));
-        await navigator.credentials.get({ 
-          publicKey: { challenge, timeout: 60000, userVerification: "required" } 
-        });
-        
-        // 本来はここで登録データと照合するが、今回は成功したらログイン
-        currentUserId = "Mizuki User"; 
-        showView('view-chat');
-        load();
-      } catch (err) {
-        status.innerText = "エラー: " + err.message;
-        console.error(err);
-      }
-    }
-
-    // 指紋登録 & GASにID保存
-    async function registerFingerprint() {
+    // 【本物の登録：公開鍵を生成してGASへ】
+    async function register() {
       const id = document.getElementById('reg-id').value;
-      if (!id) return alert("IDを入力してね");
+      if (!id) return alert("IDを入れてね");
 
       try {
         const challenge = window.crypto.getRandomValues(new Uint8Array(32));
-        await navigator.credentials.create({
+        const credential = await navigator.credentials.create({
           publicKey: {
             challenge,
             rp: { name: "Mizuki Chat" },
@@ -105,79 +66,87 @@
           }
         });
 
-        // GASへデータを送る (fetchを使用)
+        // 公開鍵を取り出す
+        const publicKey = bufferToBase64(credential.response.getPublicKey());
+
+        // GASへ保存
         await fetch(GAS_URL, {
           method: 'POST',
           mode: 'no-cors',
-          body: JSON.stringify({ action: 'registerUser', id: id })
+          body: JSON.stringify({ action: 'registerUser', id: id, publicKey: publicKey })
         });
-        
-        alert("指紋登録が完了しました！");
-        currentUserId = id;
-        showView('view-chat');
-        load();
-      } catch (err) {
-        alert("登録エラー: " + err.message);
-      }
+
+        localStorage.setItem('mizuki_chat_id', id);
+        alert("登録完了！公開鍵をスプレッドシートに送ったよ。");
+        location.reload();
+      } catch (e) { alert("登録エラー: " + e.message); }
     }
 
-    // ID検索機能
-    async function findUser() {
-      const id = document.getElementById('search-id').value;
-      const resText = document.getElementById('search-result');
-      if (!id) return;
+    // 【本物のログイン：署名を作成して検証】
+    async function login() {
+      if (!myId) return alert("先に登録してね！");
+      const status = document.getElementById('status');
+      status.innerText = "署名を作成中...";
 
-      resText.innerText = "検索中...";
       try {
-        const response = await fetch(`${GAS_URL}?action=searchUser&id=${id}`);
-        const result = await response.json();
+        const challenge = window.crypto.getRandomValues(new Uint8Array(32));
+        const assertion = await navigator.credentials.get({
+          publicKey: { challenge, timeout: 60000, userVerification: "required" }
+        });
 
-        if(result.found) {
-          resText.style.color = "#00ff00";
-          resText.innerText = `✅ 「${result.id}」が見つかりました`;
+        // 署名データを抽出
+        const sigData = {
+          action: 'loginVerify',
+          id: myId,
+          challenge: bufferToBase64(challenge),
+          signature: bufferToBase64(assertion.response.signature),
+          authenticatorData: bufferToBase64(assertion.response.authenticatorData),
+          clientDataJSON: bufferToBase64(assertion.response.clientDataJSON)
+        };
+
+        // GASで検証
+        const res = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(sigData)
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          showView('view-chat');
+          loadMsgs();
         } else {
-          resText.style.color = "#ff4444";
-          resText.innerText = "❌ ユーザーが存在しません";
+          status.innerText = "検証失敗: " + result.message;
         }
-      } catch(e) {
-        resText.innerText = "検索エラー";
-      }
+      } catch (e) { status.innerText = "エラー: " + e.message; }
     }
 
-    // メッセージ送信
-    async function send() {
-      const input = document.getElementById('msg-input');
-      const text = input.value;
-      if(!text) return;
-      
-      await fetch(GAS_URL, {
+    function sendMsg() {
+      const txt = document.getElementById('msg-input').value;
+      fetch(GAS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        body: JSON.stringify({ action: 'postMessage', userId: currentUserId, text: text })
+        body: JSON.stringify({ action: 'postMessage', userId: myId, text: txt })
+      }).then(() => {
+        document.getElementById('msg-input').value = "";
+        setTimeout(loadMsgs, 500);
       });
-
-      input.value = "";
-      setTimeout(load, 500); // 反映まで少し待ってから更新
     }
 
-    // メッセージ読み込み
-    async function load() {
-      const response = await fetch(`${GAS_URL}?action=getMessages`);
-      const messages = await response.json();
-      
-      const list = document.getElementById('msg-list');
-      list.innerHTML = messages.map(m => `
-        <div class="msg-item">
-          <strong style="color:#007bff; font-size:12px;">${m[0]}</strong><br>
-          <span style="font-size:15px;">${m[1]}</span>
-        </div>
+    async function loadMsgs() {
+      const res = await fetch(`${GAS_URL}?action=getMessages`);
+      const msgs = await res.json();
+      document.getElementById('msg-list').innerHTML = msgs.map(m => `
+        <div class="msg-item"><strong>${m[0]}</strong>: ${m[1]}</div>
       `).join('');
     }
 
     function showView(id) {
-      document.querySelectorAll('.card').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
       document.getElementById(id).classList.remove('hidden');
     }
+    
+    // 起動時にIDがあれば表示を調整
+    if(myId) document.getElementById('status').innerText = "おかえり、" + myId + "！";
   </script>
 </body>
 </html>
