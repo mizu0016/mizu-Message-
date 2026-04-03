@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mizu message</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+    <div id="screen-start" class="screen active">
+        <h1>mizu message</h1>
+        <p>Select Language / 言語選択</p>
+        <button class="lang-btn" onclick="showScreen('screen-auth')">日本語</button>
+        <button class="lang-btn" onclick="showScreen('screen-auth')">English</button>
+        <button class="lang-btn" onclick="showScreen('screen-auth')">Others</button>
+    </div>
+
+    <div id="screen-auth" class="screen">
+        <div class="form-container">
+            <h2>アカウント登録・引継ぎ</h2>
+            <div class="input-group">
+                <label>メールアドレス (引継ぎ用)</label>
+                <input type="email" id="reg-email" placeholder="mizu@example.com">
+            </div>
+            <div class="input-group">
+                <label>名前 (17文字まで)</label>
+                <input type="text" id="reg-name" maxlength="17" placeholder="表示名">
+            </div>
+            <div class="input-group">
+                <label>ID (6〜20文字、英数字のみ)</label>
+                <input type="text" id="reg-id" placeholder="mizu1234">
+            </div>
+            <button class="btn-main" onclick="register()">スタート！</button>
+        </div>
+    </div>
+
+    <div id="screen-profile" class="screen">
+        <div class="ig-header">
+            <div class="ig-avatar"></div>
+            <div class="ig-stats">
+                <div><strong>0</strong><br>投稿</div>
+                <div><strong>100</strong><br>フォロワー</div>
+                <div><strong>100</strong><br>フォロー中</div>
+            </div>
+        </div>
+        <div class="ig-name-section">
+            <strong id="prof-display-name">名前</strong><br>
+            <span id="prof-display-id" style="color: #8e8e8e;">@id</span>
+        </div>
+        <div class="ig-grid" id="post-grid"></div>
+    </div>
+
+    <div id="screen-post" class="screen">
+        <div class="form-container">
+            <h2>新規投稿</h2>
+            <input type="text" id="post-title" placeholder="タイトルを入力">
+            <p>画像・動画のURL</p>
+            <input type="text" id="post-file" placeholder="https://...">
+            <button class="btn-main" onclick="createPost()">投稿する</button>
+        </div>
+    </div>
+
+    <div id="screen-message" class="screen">
+        <div class="line-header">
+            <span>トーク</span>
+        </div>
+        <div class="line-chat-area" id="chat-box"></div>
+        <div class="line-input-area">
+            <input type="text" id="msg-input" placeholder="メッセージを入力">
+            <button class="btn-main" onclick="sendMsg()">送信</button>
+        </div>
+    </div>
+
+    <nav id="main-nav" class="nav-bar">
+        <div class="nav-item" onclick="showScreen('screen-message')">💬</div>
+        <div class="nav-item" onclick="showScreen('screen-post')">➕</div>
+        <div class="nav-item" onclick="showScreen('screen-profile')">👤</div>
+    </nav>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
