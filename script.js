@@ -1,19 +1,19 @@
-// 【重要】自分の情報を入れてね
+// 【重要】自分の情報を正しく入れてね
 const GITHUB_TOKEN = "ghp_qdYkDtmSZ68ARqQ3L4EeW86W8ySo9L1VA6MM"; 
 const REPO_OWNER = "mizu0016"; 
-const REPO_NAME = "mizu-message"; 
+const REPO_NAME = "mizu-Message-"; 
 const DATA_FILE = "data/mizu_data.json";
 
 let myUser = JSON.parse(localStorage.getItem('mizu_user')) || null;
 let allData = { posts: [], messages: [], users: [] };
 let activeChatId = null;
-
-// 友達リスト（この端末で追加した人たち）
 let myFriends = JSON.parse(localStorage.getItem('mizu_friends')) || [];
 
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    const target = document.getElementById(screenId);
+    if(target) target.classList.add('active');
+    
     if(myUser) document.getElementById('main-nav').style.display = 'flex';
     
     if(screenId === 'screen-chat-list') renderChatList();
@@ -21,7 +21,6 @@ function showScreen(screenId) {
     if(screenId === 'screen-profile') renderProfile();
 }
 
-// データ読み書き（GitHub）
 async function loadData() {
     try {
         const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`, {
@@ -31,7 +30,7 @@ async function loadData() {
             const json = await res.json();
             allData = JSON.parse(decodeURIComponent(escape(atob(json.content))));
         }
-    } catch (e) { console.log("データ取得失敗"); }
+    } catch (e) { console.log("Data load error"); }
 }
 
 async function saveData() {
@@ -40,14 +39,14 @@ async function saveData() {
         headers: { Authorization: `token ${GITHUB_TOKEN}` }
     });
     let sha = res.ok ? (await res.json()).sha : "";
+
     await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`, {
         method: "PUT",
-        headers: { Authorization: `token ${GITHUB_TOKEN}` },
-        body: JSON.stringify({ message: "Update", content, sha })
+        headers: { Authorization: `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Update Data", content, sha })
     });
 }
 
-// ID検索
 function openSearch() { document.getElementById('search-modal').style.display = 'flex'; }
 function closeSearch() { document.getElementById('search-modal').style.display = 'none'; }
 
@@ -57,9 +56,9 @@ async function searchUser() {
     const found = allData.users.find(u => u.id === sid);
     const resDiv = document.getElementById('search-result');
     if(found && found.id !== myUser.id) {
-        resDiv.innerHTML = `${found.name}さん<br><button class="btn-main" onclick="addFriend('${found.id}','${found.name}')">追加</button>`;
+        resDiv.innerHTML = `${found.name}さん発見！<br><button class="btn-main" onclick="addFriend('${found.id}','${found.name}')">追加</button>`;
     } else {
-        resDiv.innerText = "見つかりません";
+        resDiv.innerText = "ユーザーが見つかりません";
     }
 }
 
@@ -75,7 +74,7 @@ function addFriend(id, name) {
 function renderChatList() {
     const list = document.getElementById('chat-user-list');
     if(myFriends.length === 0) {
-        list.innerHTML = '<p style="text-align:center; padding:20px;">🔍から友達を追加してね</p>';
+        list.innerHTML = '<p style="text-align:center; padding:20px; color:#888;">🔍から友達を追加してね</p>';
         return;
     }
     list.innerHTML = myFriends.map(f => `
@@ -108,13 +107,13 @@ function renderMessages() {
 }
 
 async function sendMsg() {
-    const val = document.getElementById('msg-input').value;
-    if(!val) return;
+    const input = document.getElementById('msg-input');
+    if(!input.value) return;
     allData.messages.push({
-        sender: myUser.id, receiver: activeChatId, text: val, time: new Date().toLocaleTimeString()
+        sender: myUser.id, receiver: activeChatId, text: input.value, timestamp: Date.now()
     });
     await saveData();
-    document.getElementById('msg-input').value = '';
+    input.value = '';
     renderMessages();
 }
 
@@ -122,7 +121,8 @@ async function register() {
     const email = document.getElementById('reg-email').value;
     const name = document.getElementById('reg-name').value;
     const id = document.getElementById('reg-id').value;
-    if(!email || !name || !id) return;
+    if(!email || !name || !id) return alert("全部入力してね");
+
     await loadData();
     let user = allData.users.find(u => u.email === email);
     if(!user) {
@@ -140,26 +140,44 @@ function renderProfile() {
     document.getElementById('prof-display-id').innerText = '@' + myUser.id;
     const myPosts = allData.posts.filter(p => p.sender === myUser.id);
     document.getElementById('post-count').innerText = myPosts.length;
-    document.getElementById('post-grid').innerHTML = myPosts.map(p => `<div class="ig-post-item">${p.type==='video'?`<video src="${p.fileData}"></video>`:`<img src="${p.fileData}">`}</div>`).join('');
+    document.getElementById('post-grid').innerHTML = myPosts.map(p => `
+        <div class="ig-post-item">
+            ${p.type==='video'?`<video src="${p.fileData}"></video>`:`<img src="${p.fileData}">`}
+        </div>
+    `).join('');
 }
 
 async function createPost() {
     const title = document.getElementById('post-title').value;
     const file = document.getElementById('post-file-input').files[0];
-    if(!title || !file) return;
+    if(!title || !file) return alert("タイトルとファイルを選んでね");
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = async () => {
-        allData.posts.unshift({title, fileData: reader.result, type: file.type.startsWith('video')?'video':'image', sender: myUser.id});
+        allData.posts.unshift({
+            title, fileData: reader.result, type: file.type.startsWith('video')?'video':'image', sender: myUser.id
+        });
         await saveData();
+        alert("投稿完了！");
         showScreen('screen-timeline');
     };
 }
 
 function renderTimeline() {
-    document.getElementById('timeline-list').innerHTML = allData.posts.map(p => `
-        <div class="post-card">${p.type==='video'?`<video src="${p.fileData}" controls></video>`:`<img src="${p.fileData}">`}<div><strong>${p.title}</strong></div></div>
+    const list = document.getElementById('timeline-list');
+    list.innerHTML = allData.posts.map(p => `
+        <div class="post-card">
+            ${p.type==='video'?`<video src="${p.fileData}" controls></video>`:`<img src="${p.fileData}">`}
+            <div><strong>${p.title}</strong></div>
+        </div>
     `).join('');
 }
 
-if(myUser) loadData().then(() => showScreen('screen-timeline'));
+// 起動処理
+(async () => {
+    if(myUser) {
+        await loadData();
+        showScreen('screen-timeline');
+    }
+})();
