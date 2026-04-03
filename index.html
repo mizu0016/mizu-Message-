@@ -20,8 +20,8 @@
         <div class="form-container">
             <h2>アカウント管理</h2>
             <input type="email" id="reg-email" placeholder="メールアドレス">
-            <input type="text" id="reg-name" maxlength="17" placeholder="名前">
-            <input type="text" id="reg-id" placeholder="ID (英数字)">
+            <input type="text" id="reg-name" maxlength="17" placeholder="名前 (17文字まで)">
+            <input type="text" id="reg-id" placeholder="ID (英数字のみ)">
             <button class="btn-main" onclick="register()">ログイン / 登録</button>
         </div>
     </div>
@@ -55,6 +55,7 @@
         <div class="form-container">
             <h2>新規投稿</h2>
             <input type="text" id="post-title" placeholder="タイトル">
+            <p>動画または画像を選択</p>
             <input type="file" id="post-file-input" accept="video/*,image/*">
             <button class="btn-main" onclick="createPost()">アップロード</button>
         </div>
@@ -79,8 +80,8 @@
             <h3>IDで検索</h3>
             <input type="text" id="search-id-input" placeholder="友達のIDを入力" style="margin:15px 0; width:100%; padding:10px;">
             <div style="display:flex; gap:10px;">
-                <button class="btn-sub" onclick="closeSearch()" style="flex:1;">閉じる</button>
-                <button class="btn-main" onclick="searchUser()" style="flex:1;">検索</button>
+                <button class="btn-sub" onclick="closeSearch()" style="flex:1; padding:10px;">閉じる</button>
+                <button class="btn-main" onclick="searchUser()" style="flex:1; padding:10px;">検索</button>
             </div>
             <div id="search-result" style="margin-top:15px; font-weight:bold;"></div>
         </div>
