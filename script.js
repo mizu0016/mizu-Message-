@@ -1,6 +1,6 @@
 // 【重要】自分の情報を入れてね
-const GITHUB_TOKEN = "ここにghp_...を貼る"; 
-const REPO_OWNER = "自分のユーザー名"; 
+const GITHUB_TOKEN = "ghp_qdYkDtmSZ68ARqQ3L4Eew86W8ySo9L!VA&MM"; 
+const REPO_OWNER = "mizu0016"; 
 const REPO_NAME = "mizu-message"; 
 const DATA_FILE = "data/mizu_data.json";
 
