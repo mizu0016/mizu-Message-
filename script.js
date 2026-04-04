@@ -1,7 +1,7 @@
 const GITHUB_TOKEN = "ghp_qdYkDtmSZ68ARqQ3L4EeW86W8ySo9L1VA6MM"; 
 const REPO_OWNER = "mizu0016"; 
-const REPO_NAME = "mizu-Message-"; 
-const DATA_FILE = "data/mizu_data.json";
+const REPO_NAME = "mizu-Message"; // ハイフンを忘れずに！
+const DATA_FILE = "data/mizu_data.json"; // さっき作ったファイル名と合わせる
 
 let myUser = JSON.parse(localStorage.getItem('mizu_user')) || null;
 let allData = { posts: [], messages: [], users: [] };
