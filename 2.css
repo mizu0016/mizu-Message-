@@ -1,0 +1,131 @@
+body {
+    font-family: sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background-color: #ffffff;
+    padding: 15px 20px;
+    text-align: right;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* --- 検索画面のデザイン --- */
+#search-section {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.search-box input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-box button {
+    padding: 10px 20px;
+    background-color: #00B900; /* LINEのような緑色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* --- チャット画面のデザイン --- */
+.chat-header {
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chat-header button {
+    padding: 5px 10px;
+    cursor: pointer;
+    background: #e4e6eb;
+    border: none;
+    border-radius: 4px;
+}
+
+.chat-area {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #8fb1d9; /* チャット画面の背景色 */
+}
+
+.message {
+    background: #ffffff;
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-break: break-all;
+    display: inline-block;
+    clear: both;
+    float: left; /* デフォルトは左寄せ（相手のメッセージ想定） */
+}
+
+.message.my-message {
+    background: #85e085;
+    float: right; /* 自分のメッセージは右寄せ */
+}
+
+.message.system {
+    background: transparent;
+    color: #333;
+    text-align: center;
+    float: none;
+    display: block;
+    margin: 0 auto 10px auto;
+}
+
+.input-area {
+    display: flex;
+    padding: 15px;
+    background: #ffffff;
+    border-top: 1px solid #ddd;
+}
+
+.input-area input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-area button {
+    background: #00B900;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}

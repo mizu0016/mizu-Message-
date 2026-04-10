@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID検索＆チャット</title>
+    <link rel="stylesheet" href="2.css">
+</head>
+<body>
+    <header>
+        <div id="welcome-message">...</div>
+    </header>
+
+    <div id="search-section" class="container">
+        <h2>友だち追加・ID検索</h2>
+        <div class="search-box">
+            <input type="text" id="search-id-input" placeholder="相手のIDを入力してください">
+            <button onclick="searchAndStartChat()">検索してチャット開始</button>
+        </div>
+    </div>
+
+    <div id="chat-section" class="container" style="display: none;">
+        <div class="chat-header">
+            <button onclick="backToSearch()">◀ 戻る</button>
+            <span id="chat-partner-name">チャットルーム</span>
+        </div>
+        <div class="chat-area" id="chat-area">
+            <div class="message system">チャットを開始しました</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="m-text" placeholder="メッセージを入力...">
+            <button onclick="sendMessage()">送信</button>
+        </div>
+    </div>
+
+    <script src="2.js"></script>
+</body>
+</html>
