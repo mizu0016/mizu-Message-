@@ -4,10 +4,13 @@ window.onload = function() {
     if (name) {
         document.getElementById('welcome-message').innerText = name + " さん";
     } else {
-        // 名前がなければログイン画面に戻す
-        window.location.href = "1.html";
+        // 名前がなければログイン画面に戻す（index.htmlにリネームした場合はここを index.html に変えてね）
+        window.location.href = "index.html";
     }
 };
+
+// 【追加：13行目】チャット相手を記憶しておくための変数
+let currentPartner = ""; 
 
 // IDを検索してチャット画面に切り替える関数
 function searchAndStartChat() {
@@ -18,6 +21,9 @@ function searchAndStartChat() {
         alert("IDを入力してください");
         return;
     }
+
+    // 【修正：28行目】検索した相手のIDを記憶する
+    currentPartner = partnerId;
 
     // 検索画面（A）を隠して、チャット画面（B）を表示する
     document.getElementById('search-section').style.display = 'none';
@@ -32,11 +38,12 @@ function searchAndStartChat() {
 
 // チャット画面から検索画面に戻る関数
 function backToSearch() {
-    // チャット画面（B）を隠して、検索画面（A）を表示する
     document.getElementById('chat-section').style.display = 'none';
     document.getElementById('search-section').style.display = 'flex';
     
-    // チャットエリアを初期状態にリセットする
+    // 【追加：48行目】相手の記憶をリセット
+    currentPartner = "";
+
     const chatArea = document.getElementById('chat-area');
     chatArea.innerHTML = '<div class="message system">チャットを開始しました</div>';
 }
@@ -56,10 +63,20 @@ function sendMessage() {
     newMessage.className = "message my-message";
     
     const name = localStorage.getItem('userName');
+    const email = localStorage.getItem('userEmail'); // メアドも取得
+
     newMessage.innerText = name + ": " + text;
     
     // 画面に追加
     chatArea.appendChild(newMessage);
+
+    // 【追加：77行目〜】スプレッドシート（GAS）にメッセージを送る
+    const s_url = "https://script.google.com/macros/s/AKfycbxLg7kmU6KUT47RRfJgwFrKB2iEVwxYfc8PTlLB4XMQviIC1lDY6Y3KN2hErFbrBjStWg/exec";
+    
+    // 自分の名前、メアド、チャット相手、メッセージをURLにくっつけて送る
+    fetch(`${s_url}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&partner=${encodeURIComponent(currentPartner)}&message=${encodeURIComponent(text)}`, {
+        mode: 'no-cors'
+    });
     
     // 入力欄を空にする
     textInput.value = ""; 
