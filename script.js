@@ -1,15 +1,15 @@
 // --- 設定：音声・画像リスト ---
 const sounds = {
     ringtone: new Audio('Telephone-Ringtone02-1.mp3'),
-    police_start: new Audio('C:\\Users\\user\\Desktop\\119\\mp3\\001_青山龍星（ノーマル）_火事ですか、救急で….wav'),
-    fire_start: new Audio('C:\\Users\\user\\Desktop\\119\\mp3\\001_青山龍星（ノーマル）_火事ですか、救急で….wav'),
-    where: new Audio('C:\\Users\\user\\Desktop\\119\\mp3\\001_青山龍星（ノーマル）_場所はどこですか？….wav'),
-    end: new Audio('C:\\Users\\user\\Desktop\\119\\mp3\\001_青山龍星（ノーマル）_今そちらに向かわせ….wav')
+    police_start: new Audio('001_青山龍星（ノーマル）_火事ですか、救急で….wav'),
+    fire_start: new Audio('001_青山龍星（ノーマル）_火事ですか、救急で….wav'),
+    where: new Audio('001_青山龍星（ノーマル）_場所はどこですか？….wav'),
+    end: new Audio('001_青山龍星（ノーマル）_今そちらに向かわせ….wav')
 };
 
 const images = {
-    "110": [ "C:\\Users\\user\\Desktop\\119\\peg\\ChatGPT Image 2026年4月26日 11_12_25.png"], // 事故系の画像名を入れてね
-    "119": ["C:\\Users\\user\\Desktop\\119\\peg\\ChatGPT Image 2026年4月26日 11_18_02.pngxcvgh", "C:\\Users\\user\\Desktop\\119\\peg\\ChatGPT Image 2026年4月26日 10_58_15.png"]     // 火事・救急系の画像名を入れてね
+    "110": [ "ChatGPT Image 2026年4月26日 11_12_25.png"], // 事故系の画像名を入れてね
+    "119": ["ChatGPT Image 2026年4月26日 11_18_02.pngxcvgh", "ChatGPT Image 2026年4月26日 10_58_15.png"]     // 火事・救急系の画像名を入れてね
 };
 mbulance.jpg
 let currentNumber = "";
